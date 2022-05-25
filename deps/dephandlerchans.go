@@ -8,6 +8,12 @@ type DepHandlerChans struct {
 	doneChan chan struct{}
 }
 
+func NewDepHandlerChans() *DepHandlerChans {
+	return &DepHandlerChans{
+		doneChan: make(chan struct{}),
+	}
+}
+
 func (r *DepHandlerChans) AddDependency(dep DependencyManager) {
 	r.depsMu.Lock()
 	r.deps = append(r.deps, dep)
