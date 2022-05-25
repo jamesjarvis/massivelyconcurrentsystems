@@ -37,11 +37,11 @@ func (r request) AddDependency(deps ...request) {
 func (r request) Run() {
 	defer r.depmanager.Finish()
 
+	// switching things around, wait for dependencies first, then sleep.
+	r.depmanager.WaitForDependencies()
+
 	// Fake doing some work.
 	time.Sleep(r.sleeptime)
-
-	// Cannot finish until it's dependencies have finished.
-	r.depmanager.WaitForDependencies()
 }
 
 // newRequest creates a new request, using a different dependency handler depending on an enum.
