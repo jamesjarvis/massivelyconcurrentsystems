@@ -103,6 +103,8 @@ func BenchmarkWaitManyDepsWithDeps(b *testing.B) {
 	}
 	defer close(reqChan)
 
+	fmt.Printf("Executing %d requests per iteration. Should take %s ideally\n", int(math.Pow(N, L)), (L+1)*d)
+
 	tests := []struct {
 		name    string
 		flavour dephandlerflavour
