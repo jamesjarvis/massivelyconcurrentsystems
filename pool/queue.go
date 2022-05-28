@@ -51,6 +51,7 @@ func (q *queue) close() {
 }
 
 func newQueue(bufferSize int, waitClose *sync.WaitGroup) *queue {
+	waitClose.Add(1)
 	return &queue{
 		ch:        make(chan UnitOfWork, bufferSize),
 		waitClose: waitClose,

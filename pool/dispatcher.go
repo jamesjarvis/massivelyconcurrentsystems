@@ -22,7 +22,6 @@ func NewBatchDispatcher(config Config) BatchDispatcher {
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
 
-	waitClose.Add(1) // Add 1 for queue.
 	q := newQueue(config.bufferSize, &waitClose)
 	d := BatchDispatcher{
 		queue:        q,
