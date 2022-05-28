@@ -1,0 +1,60 @@
+package pool
+
+import "sync"
+
+
+consumer := pool.NewConsumer(numWorkers, bufferSize, batchSize)
+consumer.Start()
+defer consumer.Close()
+
+
+
+// Asynchronous call
+contractTemplateReq := &UnitOfWork{
+	Request: FetchContractTemplate{id:"hi"},
+	Response: nil,
+	Error: nil
+}
+// maybe the waitgroup can be added to all of the unit of works??
+// like an override somehow?
+var wg sync.WaitGroup
+wg.Add(1)
+contractTemplateReq := &UnitOfWork{
+	Request: FetchContractTemplate{id:"hi"},
+	Response: nil,
+	Error: nil,
+	WaitGroup: wg,
+}
+err := consumer.Put(contractTemplateReq)
+if err != nil {
+	return err
+}
+
+wg.Wait()
+
+if contractTemplateReq.Error() != nil {
+	return err
+}
+contractTemplate := contractTemplateReq.Response()
+
+
+
+
+
+and in the consumer, it can have a worker with the function of:
+worker := func(work []*UnitOfWork) error {
+	idsToFetch := []string{}
+	for _, w := range work {
+		idsToFetch = append(idsToFetch, w.Request().ID())
+	}
+	resps, err := SomethingExternal(context.TODO(), idsToFetch)
+	if err != nil {
+		return err
+	}
+	for _, resp := range resps {
+		// Somehow have a synchronisation thing between requests and responses without a map.
+		work.SetResponse(&thing{resp.thingy})
+	}
+	return nil
+}
+
