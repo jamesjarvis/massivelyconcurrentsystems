@@ -5,6 +5,8 @@
 // Heavily influenced by github.com/jiacai2050/prosumer
 package pool
 
+import "context"
+
 // UnitOfWork is the object designed to be passed into, and then operated on, by the pool.
 type UnitOfWork interface {
 	GetRequest() any
@@ -23,8 +25,8 @@ type Dispatcher interface {
 	// Start initialises the dispatcher.
 	Start()
 	// Put places the UnitOfWork into the pool.
-	// not sure what do use the error for yet. Maybe rejections? :shrug:
-	Put(UnitOfWork) error
+	// if the context expires before it can be enqueued, error will be ctx.Err().
+	Put(context.Context, UnitOfWork) error
 	// Close gracefully shuts down the dispatcher once all work is complete.
 	Close()
 }
