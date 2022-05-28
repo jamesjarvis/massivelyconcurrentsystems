@@ -10,6 +10,7 @@ type BatchDispatcher struct {
 	// inner buffer
 	*queue
 
+	*batchConsumer
 	numConsumers int
 
 	close     chan struct{} // notify workers to close.
@@ -27,6 +28,15 @@ func NewBatchDispatcher(config Config) BatchDispatcher {
 		queue:        q,
 		numConsumers: config.numConsumers,
 
+		batchConsumer: &batchConsumer{
+			queue:         q,
+			close:         closeChan,
+			waitClose:     &waitClose,
+			worker:        config.worker,
+			batchSize:     config.batchSize,
+			batchInterval: config.batchInterval,
+		},
+
 		close:     closeChan,
 		waitClose: &waitClose,
 	}
@@ -37,7 +47,7 @@ func NewBatchDispatcher(config Config) BatchDispatcher {
 func (d BatchDispatcher) Start() {
 	d.waitClose.Add(d.numConsumers)
 	for i := 0; i < d.numConsumers; i++ {
-		// go d.consumer.start() // start consumer
+		go d.batchConsumer.start() // start consumer
 	}
 }
 
