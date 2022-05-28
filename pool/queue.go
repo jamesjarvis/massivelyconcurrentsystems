@@ -14,6 +14,9 @@ type queue struct {
 }
 
 func (q *queue) enqueue(ctx context.Context, e UnitOfWork) error {
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
 	select {
 	case <-ctx.Done():
 		return ctx.Err()

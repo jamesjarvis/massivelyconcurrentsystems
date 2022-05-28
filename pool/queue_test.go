@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"testing"
+	"time"
 )
 
 type testUnitOfWork struct {
@@ -38,45 +39,28 @@ func (u *testUnitOfWork) Done() {
 
 func Test_queue_enqueue(t *testing.T) {
 	var bufferSize int = 10
-	deadCtx, cancelFunc := context.WithCancel(context.TODO())
-	cancelFunc()
 
-	type args struct {
-		ctx context.Context
-		e   UnitOfWork
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			name: "sends successfully",
-			args: args{
-				ctx: context.TODO(),
-				e:   &testUnitOfWork{},
-			},
-			wantErr: false,
-		},
-		{
-			name: "returns context error on deadline exceeded",
-			args: args{
-				ctx: deadCtx,
-				e:   &testUnitOfWork{},
-			},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var wg sync.WaitGroup
-			q := newQueue(bufferSize, &wg)
+	t.Run("sends successfully", func(t *testing.T) {
+		var wg sync.WaitGroup
+		q := newQueue(bufferSize, &wg)
 
-			if err := q.enqueue(tt.args.ctx, tt.args.e); (err != nil) != tt.wantErr {
-				t.Errorf("queue.enqueue() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+		if err := q.enqueue(context.TODO(), &testUnitOfWork{}); err != nil {
+			t.Errorf("queue.enqueue() error = %v, wantErr %v", err, nil)
+		}
+	})
+	t.Run("returns context error on deadline exceeded", func(t *testing.T) {
+		var wg sync.WaitGroup
+		q := newQueue(bufferSize, &wg)
+
+		deadCtx, cancelFunc := context.WithDeadline(context.TODO(), time.Now().Add(-time.Second))
+		defer cancelFunc()
+		<-deadCtx.Done()
+
+		if err := q.enqueue(deadCtx, &testUnitOfWork{}); err == nil {
+			t.Fatalf("queue.enqueue() error = %v, wantErr %v", err, context.Canceled)
+		}
+	})
+
 }
 
 func TestQueueGracefulClose(t *testing.T) {
@@ -106,7 +90,7 @@ func TestQueueGracefulClose(t *testing.T) {
 
 		q.close()
 		if itemsRetrieved != 2 {
-			t.Fatal("Incorrect items received while closing queue")
+			t.Errorf("Incorrect items received while closing queue")
 		}
 	})
 }
