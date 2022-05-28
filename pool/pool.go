@@ -1,4 +1,8 @@
-// Package pool is designed to be a simple worker pool orchestrator
+// Package pool is designed to be a simple worker pool orchestrator,
+// primarily focused on workloads that require batched execution of work
+// due to I/O limitations.
+// e.g.: batching access to a underlying database connection.
+// Heavily influenced by github.com/jiacai2050/prosumer
 package pool
 
 // UnitOfWork is the object designed to be passed into, and then operated on, by the pool.
