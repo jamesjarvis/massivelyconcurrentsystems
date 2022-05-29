@@ -62,6 +62,14 @@ loop:
 				// TODO(jamesjarvis): revisit this strategy. I think it means if we have nothing in the queue,
 				// we force ourselves to wait for the whole duration of the batchInterval before picking up values again.
 				doWork()
+			case e := <-c.queue.ch:
+				if e != nil {
+					received = append(received, e)
+					if len(received) >= c.batchSize {
+						// reached max batch size.
+						doWork()
+					}
+				}
 			}
 		}
 	}
