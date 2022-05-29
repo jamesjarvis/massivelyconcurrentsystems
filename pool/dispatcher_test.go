@@ -75,9 +75,10 @@ var tests = []struct {
 }
 
 func TestBatchDispatcher(t *testing.T) {
+	alreadyRunningGoRoutines := goleak.IgnoreCurrent()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer goleak.VerifyNone(t)
+			defer goleak.VerifyNone(t, alreadyRunningGoRoutines)
 
 			var mu sync.Mutex
 			var workProcessed int
@@ -162,7 +163,7 @@ func BenchmarkBatchDispatcher(b *testing.B) {
 }
 
 func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
-	defaultDuration := time.Millisecond
+	defaultDuration := time.Microsecond
 
 	configTests := []struct {
 		name           string
@@ -177,6 +178,11 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 			name:           "tiny buffer",
 			workerDuration: defaultDuration,
 			opts:           []Opt{SetBufferSize(1)},
+		},
+		{
+			name:           "no buffer",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBufferSize(-1)},
 		},
 		{
 			name:           "large buffer",
@@ -227,7 +233,7 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 	for _, test := range configTests {
 		b.Run(test.name, func(b *testing.B) {
 			worker := func(us []UnitOfWork) error {
-				time.Sleep(test.workerDuration)
+				// time.Sleep(test.workerDuration)
 				for _, u := range us {
 					u.Done()
 				}
