@@ -22,12 +22,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Run tests
         run: go test ./... -v -covermode=count
-      - name: install benchstat
-        run: go install golang.org/x/perf/cmd/benchstat@latest
+      # - name: install benchstat
+      #   run: go install golang.org/x/perf/cmd/benchstat@latest
       - name: Run benchmarks
-        run: go test ./... -bench . -count 10 -shuffle on -cpu 1,2,16 | tee benchoutput.txt
-      - name: Display benchmark output
-        run: benchstat benchoutput.txt
+        run: go test ./... -bench . -shuffle on -cpu 1,2,4,8,16 | tee benchoutput.txt
+      # - name: Display benchmark output
+      #   run: benchstat benchoutput.txt
       # Download previous benchmark result from cache (if exists)
       - name: Download previous benchmark data
         uses: actions/cache@v1
