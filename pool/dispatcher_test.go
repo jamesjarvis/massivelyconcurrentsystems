@@ -180,11 +180,6 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 			opts:           []Opt{SetBufferSize(1)},
 		},
 		{
-			name:           "no buffer",
-			workerDuration: defaultDuration,
-			opts:           []Opt{SetBufferSize(-1)},
-		},
-		{
 			name:           "large buffer",
 			workerDuration: defaultDuration,
 			opts:           []Opt{SetBufferSize(1000)},
