@@ -61,7 +61,7 @@ func NewConfig(w BatchWorker, opts ...Opt) Config {
 	}
 
 	if conf.batchInterval == 0 {
-		conf.batchInterval = 69 * time.Millisecond
+		conf.batchInterval = time.Microsecond
 	}
 
 	if conf.numConsumers == 0 {
