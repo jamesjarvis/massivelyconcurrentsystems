@@ -21,7 +21,7 @@ jobs:
       - name: install benchstat
         run: go install golang.org/x/perf/cmd/benchstat@latest
       - name: Run benchmarks
-        run: go test ./... -bench . -count 10 -shuffle on | tee benchoutput.txt
+        run: go test ./... -bench . -count 10 -shuffle on -cpu 1,2,16 | tee benchoutput.txt
       - name: Display benchmark output
         run: benchstat benchoutput.txt
       # Download previous benchmark result from cache (if exists)
