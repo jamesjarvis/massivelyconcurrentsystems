@@ -21,7 +21,28 @@ jobs:
       - name: install benchstat
         run: go install golang.org/x/perf/cmd/benchstat@latest
       - name: Run benchmarks
-        run: go test ./... -bench . -count 10 -shuffle on > benchstat.out && benchstat benchstat.out
+        run: go test ./... -bench . -count 10 -shuffle on | tee benchoutput.txt
+      - name: Display benchmark output
+        run: benchstat benchoutput.txt
+      # Download previous benchmark result from cache (if exists)
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+      # Run `github-action-benchmark` action
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          # What benchmark tool the benchoutput.txt came from
+          tool: 'go'
+          # Where the output from the benchmark tool is stored
+          output-file-path: benchoutput.txt
+          # Where the previous data file is stored
+          external-data-json-path: ./cache/benchmark-data.json
+          # Workflow will fail when an alert happens
+          fail-on-alert: true
+      # Upload the updated cache file for the next job by actions/cache
   
   # publish-benchmarks:
   #   runs-on: ubuntu-latest
