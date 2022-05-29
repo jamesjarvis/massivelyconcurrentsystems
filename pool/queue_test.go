@@ -8,10 +8,7 @@ import (
 )
 
 type testUnitOfWork struct {
-	request  int
-	response int
-	err      error
-	wg       *sync.WaitGroup
+	wg *sync.WaitGroup
 }
 
 func (u *testUnitOfWork) GetRequest() any {
