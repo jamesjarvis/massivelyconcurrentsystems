@@ -221,7 +221,7 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 		{
 			name:           "guesstimate",
 			workerDuration: defaultDuration,
-			opts:           []Opt{SetNumConsumers(runtime.NumCPU() / 2), SetBatchInterval(time.Nanosecond), SetBatchSize(200), SetBufferSize((runtime.NumCPU() / 2) * 200)},
+			opts:           []Opt{SetNumConsumers(3), SetBatchInterval(time.Nanosecond), SetBatchSize(200), SetBufferSize((runtime.NumCPU() / 2) * 200)},
 		},
 	}
 	for _, test := range configTests {
