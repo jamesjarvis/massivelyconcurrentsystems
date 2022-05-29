@@ -117,7 +117,7 @@ func TestBatchDispatcher(t *testing.T) {
 
 			if calls > 0 {
 				t.Logf("workers called %d times with avg batch size of %d in %s", calls, workProcessed/calls, time.Since(startTime))
-				t.Logf("avg latency per request of %d", time.Since(startTime)/time.Duration(workProcessed))
+				t.Logf("avg latency per request of %s", time.Since(startTime)/time.Duration(workProcessed))
 			}
 		})
 	}
