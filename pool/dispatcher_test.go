@@ -248,11 +248,13 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 			b.ResetTimer()
 
 			b.RunParallel(func(pb *testing.PB) {
+				// We can be a bit sneaky here and use the same units of work, as they effectively reset each time.
+				wg := &sync.WaitGroup{}
+				work := &testUnitOfWork{wg: wg}
 				for pb.Next() {
-					wg := &sync.WaitGroup{}
 					wg.Add(1)
 
-					err := dispatcher.Put(context.TODO(), &testUnitOfWork{wg: wg})
+					err := dispatcher.Put(context.TODO(), work)
 					if err != nil {
 						b.Errorf("dispatcher.Put error encountered! %v != nil", err)
 					}
