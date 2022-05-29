@@ -2,6 +2,7 @@ package pool
 
 import (
 	"context"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -150,6 +151,104 @@ func BenchmarkBatchDispatcher(b *testing.B) {
 
 				wg.Wait()
 			}
+
+			b.StopTimer()
+			err := dispatcher.Close()
+			if err != nil {
+				b.Errorf("dispatcher.Close should not error! %v != nil", err)
+			}
+		})
+	}
+}
+
+func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
+	defaultDuration := time.Millisecond
+
+	configTests := []struct {
+		name           string
+		workerDuration time.Duration
+		opts           []Opt
+	}{
+		{
+			name:           "default",
+			workerDuration: defaultDuration,
+		},
+		{
+			name:           "tiny buffer",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBufferSize(1)},
+		},
+		{
+			name:           "large buffer",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBufferSize(1000)},
+		},
+		{
+			name:           "tiny interval",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBatchInterval(time.Nanosecond)},
+		},
+		{
+			name:           "huge interval",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBatchInterval(10 * time.Millisecond)},
+		},
+		{
+			name:           "tiny batch size",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBatchSize(1)},
+		},
+		{
+			name:           "huge batch size",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetBatchSize(1000)},
+		},
+		{
+			name:           "tiny number of workers",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetNumConsumers(1)},
+		},
+		{
+			name:           "educated guess number of workers",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetNumConsumers(runtime.NumCPU() / 2)},
+		},
+		{
+			name:           "huge number of workers",
+			workerDuration: defaultDuration,
+			opts:           []Opt{SetNumConsumers(1000)},
+		},
+	}
+	for _, test := range configTests {
+		b.Run(test.name, func(b *testing.B) {
+			worker := func(us []UnitOfWork) error {
+				time.Sleep(test.workerDuration)
+				for _, u := range us {
+					u.Done()
+				}
+				return nil
+			}
+			config := NewConfig(worker, test.opts...)
+			dispatcher := NewBatchDispatcher(config)
+
+			dispatcher.Start()
+
+			b.ReportAllocs()
+			b.ResetTimer()
+
+			b.RunParallel(func(pb *testing.PB) {
+				for pb.Next() {
+					wg := &sync.WaitGroup{}
+					wg.Add(1)
+
+					err := dispatcher.Put(context.TODO(), &testUnitOfWork{wg: wg})
+					if err != nil {
+						b.Errorf("dispatcher.Put error encountered! %v != nil", err)
+					}
+
+					wg.Wait()
+				}
+			})
 
 			b.StopTimer()
 			err := dispatcher.Close()
