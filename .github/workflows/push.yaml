@@ -42,6 +42,12 @@ jobs:
           external-data-json-path: ./cache/benchmark-data.json
           # Workflow will fail when an alert happens
           fail-on-alert: true
+          # GitHub API token to make a commit comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Mention @jamesjarvis in the commit comment
+          alert-comment-cc-users: '@jamesjarvis'
       # Upload the updated cache file for the next job by actions/cache
   
   # publish-benchmarks:
