@@ -11,6 +11,7 @@ type testUnitOfWork struct {
 	request  int
 	response int
 	err      error
+	wg       *sync.WaitGroup
 }
 
 func (u *testUnitOfWork) GetRequest() any {
@@ -34,7 +35,7 @@ func (u *testUnitOfWork) SetError(_ error) {
 }
 
 func (u *testUnitOfWork) Done() {
-	panic("not implemented") // TODO: Implement
+	u.wg.Done()
 }
 
 func Test_queue_enqueue(t *testing.T) {
