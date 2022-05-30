@@ -1,13 +1,8 @@
 linters:
   presets:
     - bugs
-    # - comment
-    # - complexity
-    # - error
-    # - format
-    # - import
+    - import
     - metalinter
-    # - module
+    - module
     - performance
-    # - style
-    # - unused
+    - unused
