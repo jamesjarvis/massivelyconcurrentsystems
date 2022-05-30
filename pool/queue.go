@@ -38,10 +38,6 @@ func (q *queue) size() int {
 	return len(q.ch)
 }
 
-func (q *queue) cap() int {
-	return cap(q.ch)
-}
-
 func (q *queue) close() {
 	close(q.ch)
 	for {

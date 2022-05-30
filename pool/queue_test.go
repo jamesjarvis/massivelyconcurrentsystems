@@ -72,8 +72,14 @@ func TestQueueGracefulClose(t *testing.T) {
 	t.Run("queue with items waits for items to leave", func(t *testing.T) {
 		var wg sync.WaitGroup
 		q := newQueue(bufferSize, &wg)
-		q.enqueue(context.TODO(), &testUnitOfWork{})
-		q.enqueue(context.TODO(), &testUnitOfWork{})
+		err := q.enqueue(context.TODO(), &testUnitOfWork{})
+		if err != nil {
+			t.Error(err)
+		}
+		err = q.enqueue(context.TODO(), &testUnitOfWork{})
+		if err != nil {
+			t.Error(err)
+		}
 
 		var itemsRetrieved int
 		go func() {
