@@ -6,10 +6,8 @@ linters:
     # - error
     # - format
     # - import
-    # - metalinter
+    - metalinter
     # - module
     - performance
-    # - sql
     # - style
-    # - test
     # - unused

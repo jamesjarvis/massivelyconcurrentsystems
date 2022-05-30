@@ -89,8 +89,8 @@ func TestBatchDispatcher(t *testing.T) {
 				time.Sleep(testLocal.workerDuration)
 				mu.Lock()
 				defer mu.Unlock()
-				workProcessed = workProcessed + len(us)
-				calls = calls + 1
+				workProcessed += len(us)
+				calls++
 				return nil
 			}
 			config := NewConfig(worker, testLocal.opts...)

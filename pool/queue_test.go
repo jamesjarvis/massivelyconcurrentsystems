@@ -36,7 +36,7 @@ func (u *testUnitOfWork) Done() {
 }
 
 func Test_queue_enqueue(t *testing.T) {
-	var bufferSize int = 10
+	const bufferSize = 10
 
 	t.Run("sends successfully", func(t *testing.T) {
 		var wg sync.WaitGroup
@@ -88,7 +88,7 @@ func TestQueueGracefulClose(t *testing.T) {
 				if !ok || u == nil {
 					break
 				}
-				itemsRetrieved = itemsRetrieved + 1
+				itemsRetrieved++
 			}
 		}()
 
