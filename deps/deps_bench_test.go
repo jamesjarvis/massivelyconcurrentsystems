@@ -119,13 +119,14 @@ func BenchmarkWaitManyDepsWithDeps(b *testing.B) {
 		},
 	}
 	for _, test := range tests {
+		testLocal := test
 		b.Run(test.name, func(b *testing.B) {
 			b.ResetTimer()
 			b.ReportAllocs()
 
 			for n := 0; n < b.N; n++ {
 				b.StopTimer() // we don't care about the time it takes to create these request objects.
-				root, reqs := createRequests(L, N, test.flavour)
+				root, reqs := createRequests(L, N, testLocal.flavour)
 				b.StartTimer()
 				// fmt.Println(len(reqs)+1, "requests")
 

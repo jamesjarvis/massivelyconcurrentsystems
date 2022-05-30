@@ -77,6 +77,7 @@ var tests = []struct {
 func TestBatchDispatcher(t *testing.T) {
 	alreadyRunningGoRoutines := goleak.IgnoreCurrent()
 	for _, test := range tests {
+		testLocal := test
 		t.Run(test.name, func(t *testing.T) {
 			defer goleak.VerifyNone(t, alreadyRunningGoRoutines)
 
@@ -85,20 +86,20 @@ func TestBatchDispatcher(t *testing.T) {
 			var calls int
 
 			worker := func(us []UnitOfWork) error {
-				time.Sleep(test.workerDuration)
+				time.Sleep(testLocal.workerDuration)
 				mu.Lock()
 				defer mu.Unlock()
 				workProcessed = workProcessed + len(us)
 				calls = calls + 1
 				return nil
 			}
-			config := NewConfig(worker, test.opts...)
+			config := NewConfig(worker, testLocal.opts...)
 			dispatcher := NewBatchDispatcher(config)
 
 			dispatcher.Start()
 			startTime := time.Now()
 
-			for i := 0; i < test.expectedWorkProcessed; i++ {
+			for i := 0; i < testLocal.expectedWorkProcessed; i++ {
 				err := dispatcher.Put(context.TODO(), &testUnitOfWork{})
 				if err != nil {
 					t.Errorf("dispatcher.Put error encountered! %v != nil", err)
@@ -110,8 +111,8 @@ func TestBatchDispatcher(t *testing.T) {
 				t.Errorf("dispatcher.Close should not error! %v != nil", err)
 			}
 
-			if workProcessed != test.expectedWorkProcessed {
-				t.Errorf("workProcessed invalid! %d != %d", workProcessed, test.expectedWorkProcessed)
+			if workProcessed != testLocal.expectedWorkProcessed {
+				t.Errorf("workProcessed invalid! %d != %d", workProcessed, testLocal.expectedWorkProcessed)
 			}
 
 			if calls > 0 {
@@ -124,15 +125,16 @@ func TestBatchDispatcher(t *testing.T) {
 
 func BenchmarkBatchDispatcher(b *testing.B) {
 	for _, test := range tests {
+		testLocal := test
 		b.Run(test.name, func(b *testing.B) {
 			var wg sync.WaitGroup
 
 			worker := func(us []UnitOfWork) error {
-				time.Sleep(test.workerDuration)
+				time.Sleep(testLocal.workerDuration)
 				wg.Add(-len(us))
 				return nil
 			}
-			config := NewConfig(worker, test.opts...)
+			config := NewConfig(worker, testLocal.opts...)
 			dispatcher := NewBatchDispatcher(config)
 
 			dispatcher.Start()
@@ -141,9 +143,9 @@ func BenchmarkBatchDispatcher(b *testing.B) {
 			b.ResetTimer()
 
 			for n := 0; n < b.N; n++ {
-				wg.Add(test.expectedWorkProcessed)
+				wg.Add(testLocal.expectedWorkProcessed)
 
-				for i := 0; i < test.expectedWorkProcessed; i++ {
+				for i := 0; i < testLocal.expectedWorkProcessed; i++ {
 					err := dispatcher.Put(context.TODO(), &testUnitOfWork{})
 					if err != nil {
 						b.Errorf("dispatcher.Put error encountered! %v != nil", err)
@@ -226,6 +228,7 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 		},
 	}
 	for _, test := range configTests {
+		testLocal := test
 		b.Run(test.name, func(b *testing.B) {
 			worker := func(us []UnitOfWork) error {
 				// time.Sleep(test.workerDuration)
@@ -234,7 +237,7 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 				}
 				return nil
 			}
-			config := NewConfig(worker, test.opts...)
+			config := NewConfig(worker, testLocal.opts...)
 			dispatcher := NewBatchDispatcher(config)
 
 			dispatcher.Start()
