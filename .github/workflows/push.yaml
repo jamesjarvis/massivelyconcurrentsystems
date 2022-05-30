@@ -15,11 +15,11 @@ jobs:
     steps:
       - name: Install Go
         if: success()
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run tests
         run: go test ./... -v -covermode=count
       # - name: install benchstat
@@ -54,6 +54,19 @@ jobs:
           alert-comment-cc-users: '@jamesjarvis'
       # Upload the updated cache file for the next job by actions/cache
   
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+
   # publish-benchmarks:
   #   runs-on: ubuntu-latest
   #   steps:
