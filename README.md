@@ -1,7 +1,9 @@
 # Massively Concurrent Systems Design
 
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/jamesjarvis/massivelyconcurrentsystems)
 [![Go Reference](https://pkg.go.dev/badge/github.com/jamesjarvis/massivelyconcurrentsystems.svg)](https://pkg.go.dev/github.com/jamesjarvis/massivelyconcurrentsystems)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/jamesjarvis/massivelyconcurrentsystems/go%20testing/master)
+![GitHub](https://img.shields.io/github/license/jamesjarvis/massivelyconcurrentsystems)
 
 ---
 
