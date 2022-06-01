@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654112248419,
+  "lastUpdate": 1654112648608,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -288,6 +288,150 @@ window.BENCHMARK_DATA = {
             "value": 6430071,
             "unit": "ns/op\t    4801 B/op\t     100 allocs/op",
             "extra": "1886 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "distinct": true,
+          "id": "2391354a9f60bfb42c19e10267a5c7d2e6c567ec",
+          "message": "add some more badges because badges are cool",
+          "timestamp": "2022-06-01T20:37:16+01:00",
+          "tree_id": "54fec6aa67549a22ae0a4b174c4a93ff1dcc7bba",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/2391354a9f60bfb42c19e10267a5c7d2e6c567ec"
+        },
+        "date": 1654112647892,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkBatchDispatcher/no_work",
+            "value": 15.3,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "781878108 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/lots_of_work",
+            "value": 1544224,
+            "unit": "ns/op\t   48000 B/op\t    1000 allocs/op",
+            "extra": "7400 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/more_work_than_buffer",
+            "value": 1119064,
+            "unit": "ns/op\t    4800 B/op\t     100 allocs/op",
+            "extra": "10000 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/more_workers_than_work",
+            "value": 1335189,
+            "unit": "ns/op\t    4839 B/op\t     100 allocs/op",
+            "extra": "8965 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/tiny_batch_size",
+            "value": 33352,
+            "unit": "ns/op\t    4800 B/op\t     100 allocs/op",
+            "extra": "350844 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/huge_batch_size",
+            "value": 1118914,
+            "unit": "ns/op\t    4803 B/op\t     100 allocs/op",
+            "extra": "10000 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/teeny_interval",
+            "value": 37530332,
+            "unit": "ns/op\t    4803 B/op\t     100 allocs/op",
+            "extra": "1134 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/slow_worker",
+            "value": 6432232,
+            "unit": "ns/op\t    4802 B/op\t     100 allocs/op",
+            "extra": "1898 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/slow_worker_and_huge_batch_size",
+            "value": 6479476,
+            "unit": "ns/op\t    4805 B/op\t     100 allocs/op",
+            "extra": "1875 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/default",
+            "value": 521816,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "23475 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_buffer",
+            "value": 525793,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "22812 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/large_buffer",
+            "value": 519005,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "23078 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_interval",
+            "value": 15714907,
+            "unit": "ns/op\t       6 B/op\t       0 allocs/op",
+            "extra": "709 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/huge_interval",
+            "value": 4272265,
+            "unit": "ns/op\t       1 B/op\t       0 allocs/op",
+            "extra": "3139 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_batch_size",
+            "value": 1270,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "9771079 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/huge_batch_size",
+            "value": 526270,
+            "unit": "ns/op\t       1 B/op\t       0 allocs/op",
+            "extra": "22855 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_number_of_workers",
+            "value": 543877,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "22066 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/educated_guess_number_of_workers",
+            "value": 543920,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "22076 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/huge_number_of_workers",
+            "value": 58424,
+            "unit": "ns/op\t       6 B/op\t       0 allocs/op",
+            "extra": "259633 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/guesstimate",
+            "value": 24550306,
+            "unit": "ns/op\t      17 B/op\t       0 allocs/op",
+            "extra": "428 times\n2 procs"
           }
         ]
       }
