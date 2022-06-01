@@ -1,0 +1,37 @@
+name: benchmark on master
+# Do not run this workflow on pull request since this workflow has permission to modify contents.
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  # deployments permission to deploy GitHub pages website
+  deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v3
+      - name: Run benchmarks
+        run: go test ./... -bench . -shuffle on -benchtime 10s | tee benchoutput.txt
+      # Run `github-action-benchmark` action
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          # What benchmark tool the benchoutput.txt came from
+          tool: 'go'
+          # Where the output from the benchmark tool is stored
+          output-file-path: benchoutput.txt
+          # GitHub API token to make a commit comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Mention @jamesjarvis in the commit comment
+          alert-comment-cc-users: '@jamesjarvis'
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true
