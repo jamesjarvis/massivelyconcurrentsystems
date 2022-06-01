@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654110941552,
+  "lastUpdate": 1654111153677,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -72,6 +72,42 @@ window.BENCHMARK_DATA = {
             "value": 19122520,
             "unit": "ns/op\t       9 B/op\t       0 allocs/op",
             "extra": "630 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "distinct": true,
+          "id": "074caa6db4770acdebde2446ae5a03b814561639",
+          "message": "seems I have to specify the go-version to get benchmark output",
+          "timestamp": "2022-06-01T20:18:11+01:00",
+          "tree_id": "0775769bea9e862b261eb08d904c3f154b11faa6",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/074caa6db4770acdebde2446ae5a03b814561639"
+        },
+        "date": 1654111153255,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 15294016,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "711 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 16109278,
+            "unit": "ns/op\t      15 B/op\t       0 allocs/op",
+            "extra": "770 times\n2 procs"
           }
         ]
       }
