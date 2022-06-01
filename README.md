@@ -1,5 +1,12 @@
 # Massively Concurrent Systems Design
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/jamesjarvis/massivelyconcurrentsystems.svg)](https://pkg.go.dev/github.com/jamesjarvis/massivelyconcurrentsystems)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/jamesjarvis/massivelyconcurrentsystems/go%20testing/master)
+
+---
+
+## What is this?
+
 This repo is an exercise to see what the limitations of go's concurrency model is, and to see if it is realistic to be able to build systems based on the Massively Concurrent design.
 
 We require 2 things:
@@ -16,3 +23,11 @@ We require 2 things:
 However, this all falls apart if the system cannot efficiently schedule thousands of concurrently running requests on a single instance.
 
 For reference, we should be looking for throughput of around 50k/s and library latency of less than 2ms per req on a machine with fewer than 20 cores.
+
+---
+## Benchmarks
+
+You are able to view the latest benchmark results at [jamesjarvis.github.io/massivelyconcurrentsystems](https://jamesjarvis.github.io/massivelyconcurrentsystems/)
+
+- [deps](https://jamesjarvis.github.io/massivelyconcurrentsystems/bench/deps)
+- [pool](https://jamesjarvis.github.io/massivelyconcurrentsystems/bench/pool)
