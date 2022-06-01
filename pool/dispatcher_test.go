@@ -94,7 +94,7 @@ func TestBatchDispatcher(t *testing.T) {
 				return nil
 			}
 			config := NewConfig(testLocal.opts...)
-			dispatcher := NewBatchDispatcher[int, int](worker, config)
+			dispatcher := NewBatchDispatcher(worker, config)
 
 			dispatcher.Start()
 			startTime := time.Now()
