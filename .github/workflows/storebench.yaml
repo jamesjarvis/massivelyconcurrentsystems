@@ -17,16 +17,14 @@ jobs:
     steps:
       - uses: actions/setup-go@v3
       - uses: actions/checkout@v3
-      - name: Run benchmarks
-        run: go test ./... -bench . -shuffle on -benchtime 10s | tee benchoutput.txt
-      # Run `github-action-benchmark` action
-      - name: Store benchmark result
+      - name: Run deps benchmarks
+        run: go test github.com/jamesjarvis/massivelyconcurrentsystems/deps -bench . -shuffle on -benchtime 10s | tee depsoutput.txt
+      - name: Store deps benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
-          # What benchmark tool the benchoutput.txt came from
           tool: 'go'
           # Where the output from the benchmark tool is stored
-          output-file-path: benchoutput.txt
+          output-file-path: depsoutput.txt
           # GitHub API token to make a commit comment
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Enable alert commit comment
@@ -35,3 +33,23 @@ jobs:
           alert-comment-cc-users: '@jamesjarvis'
           # Push and deploy GitHub pages branch automatically
           auto-push: true
+          # Where to store the bench results.
+          benchmark-data-dir-path: 'bench/deps'
+      - name: Run pool benchmarks
+        run: go test github.com/jamesjarvis/massivelyconcurrentsystems/pool -bench . -shuffle on -benchtime 10s | tee pooloutput.txt
+      - name: Store pool benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'go'
+          # Where the output from the benchmark tool is stored
+          output-file-path: pooloutput.txt
+          # GitHub API token to make a commit comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Mention @jamesjarvis in the commit comment
+          alert-comment-cc-users: '@jamesjarvis'
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true
+          # Where to store the bench results.
+          benchmark-data-dir-path: 'bench/pool'
