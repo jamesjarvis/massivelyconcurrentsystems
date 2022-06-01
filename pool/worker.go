@@ -6,18 +6,18 @@ import (
 )
 
 // batchConsumer consumes from the inner queue and invokes the BatchWorker.
-type batchConsumer struct {
-	*queue
+type batchConsumer[REQ, RESP any] struct {
+	*queue[REQ, RESP]
 	close     chan struct{}
 	waitClose *sync.WaitGroup
 
-	worker        BatchWorker
+	worker        BatchWorker[REQ, RESP]
 	batchSize     int
 	batchInterval time.Duration
 }
 
-func (c *batchConsumer) start() {
-	received := make([]UnitOfWork, 0, c.batchSize)
+func (c *batchConsumer[REQ, RESP]) start() {
+	received := make([]UnitOfWork[REQ, RESP], 0, c.batchSize)
 	watchdog := time.NewTimer(c.batchInterval)
 
 	doWork := func() {

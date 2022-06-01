@@ -5,28 +5,30 @@
 // Heavily influenced by github.com/jiacai2050/prosumer
 package pool
 
-import "context"
+import (
+	"context"
+)
 
 // UnitOfWork is the object designed to be passed into, and then operated on, by the pool.
-type UnitOfWork interface {
-	GetRequest() any
-	GetResponse() any
-	SetResponse(any)
+type UnitOfWork[REQ any, RESP any] interface {
+	GetRequest() REQ
+	GetResponse() RESP
+	SetResponse(RESP)
 	GetError() error
 	SetError(error)
 	Done()
 }
 
 // BatchWorker is a function that will be used to operate on a batch of requests from the pool.
-type BatchWorker func([]UnitOfWork) error
+type BatchWorker[REQ, RESP any] func([]UnitOfWork[REQ, RESP]) error
 
 // Dispatcher controls interactions with the pool.
-type Dispatcher interface {
+type Dispatcher[E any] interface {
 	// Start initialises the dispatcher.
 	Start()
 	// Put places the UnitOfWork into the pool.
 	// if the context expires before it can be enqueued, error will be ctx.Err().
-	Put(context.Context, UnitOfWork) error
+	Put(context.Context, E) error
 	// Close gracefully shuts down the dispatcher once all work is complete.
 	Close()
 }

@@ -7,54 +7,26 @@ import (
 	"time"
 )
 
-type testUnitOfWork struct {
-	wg *sync.WaitGroup
-}
-
-func (u *testUnitOfWork) GetRequest() any {
-	panic("not implemented") // TODO: Implement
-}
-
-func (u *testUnitOfWork) GetResponse() any {
-	panic("not implemented") // TODO: Implement
-}
-
-func (u *testUnitOfWork) SetResponse(_ any) {
-	panic("not implemented") // TODO: Implement
-}
-
-func (u *testUnitOfWork) GetError() error {
-	panic("not implemented") // TODO: Implement
-}
-
-func (u *testUnitOfWork) SetError(_ error) {
-	panic("not implemented") // TODO: Implement
-}
-
-func (u *testUnitOfWork) Done() {
-	u.wg.Done()
-}
-
 func Test_queue_enqueue(t *testing.T) {
 	const bufferSize = 10
 
 	t.Run("sends successfully", func(t *testing.T) {
 		var wg sync.WaitGroup
-		q := newQueue(bufferSize, &wg)
+		q := newQueue[int, int](bufferSize, &wg)
 
-		if err := q.enqueue(context.TODO(), &testUnitOfWork{}); err != nil {
+		if err := q.enqueue(context.TODO(), NewUnitOfWork[int, int](10, &wg)); err != nil {
 			t.Errorf("queue.enqueue() error = %v, wantErr %v", err, nil)
 		}
 	})
 	t.Run("returns context error on deadline exceeded", func(t *testing.T) {
 		var wg sync.WaitGroup
-		q := newQueue(bufferSize, &wg)
+		q := newQueue[int, int](bufferSize, &wg)
 
 		deadCtx, cancelFunc := context.WithDeadline(context.TODO(), time.Now().Add(-time.Second))
 		defer cancelFunc()
 		<-deadCtx.Done()
 
-		if err := q.enqueue(deadCtx, &testUnitOfWork{}); err == nil {
+		if err := q.enqueue(deadCtx, NewUnitOfWork[int, int](10, &wg)); err == nil {
 			t.Fatalf("queue.enqueue() error = %v, wantErr %v", err, context.Canceled)
 		}
 	})
@@ -66,17 +38,17 @@ func TestQueueGracefulClose(t *testing.T) {
 
 	t.Run("empty queue closes instantly", func(t *testing.T) {
 		var wg sync.WaitGroup
-		q := newQueue(bufferSize, &wg)
+		q := newQueue[string, string](bufferSize, &wg)
 		q.close()
 	})
 	t.Run("queue with items waits for items to leave", func(t *testing.T) {
 		var wg sync.WaitGroup
-		q := newQueue(bufferSize, &wg)
-		err := q.enqueue(context.TODO(), &testUnitOfWork{})
+		q := newQueue[string, string](bufferSize, &wg)
+		err := q.enqueue(context.TODO(), NewUnitOfWork[string, string]("hello world", &wg))
 		if err != nil {
 			t.Error(err)
 		}
-		err = q.enqueue(context.TODO(), &testUnitOfWork{})
+		err = q.enqueue(context.TODO(), NewUnitOfWork[string, string]("hello world", &wg))
 		if err != nil {
 			t.Error(err)
 		}

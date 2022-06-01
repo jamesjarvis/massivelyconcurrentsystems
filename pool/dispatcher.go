@@ -6,11 +6,11 @@ import (
 )
 
 // BatchDispatcher controls access to the batched pool implementation.
-type BatchDispatcher struct {
+type BatchDispatcher[REQ, RESP any] struct {
 	// inner buffer
-	*queue
+	*queue[REQ, RESP]
 
-	*batchConsumer
+	*batchConsumer[REQ, RESP]
 	numConsumers int
 
 	close     chan struct{} // notify workers to close.
@@ -18,20 +18,20 @@ type BatchDispatcher struct {
 }
 
 // NewBatchDispatcher returns a BatchDispatcher parameterised from Config.
-func NewBatchDispatcher(config Config) BatchDispatcher {
+func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Config) BatchDispatcher[REQ, RESP] {
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
 
-	q := newQueue(config.bufferSize, &waitClose)
-	d := BatchDispatcher{
+	q := newQueue[REQ, RESP](config.bufferSize, &waitClose)
+	d := BatchDispatcher[REQ, RESP]{
 		queue:        q,
 		numConsumers: config.numConsumers,
 
-		batchConsumer: &batchConsumer{
+		batchConsumer: &batchConsumer[REQ, RESP]{
 			queue:         q,
 			close:         closeChan,
 			waitClose:     &waitClose,
-			worker:        config.worker,
+			worker:        worker,
 			batchSize:     config.batchSize,
 			batchInterval: config.batchInterval,
 		},
@@ -43,7 +43,7 @@ func NewBatchDispatcher(config Config) BatchDispatcher {
 }
 
 // Start initialises the BatchDispatcher.
-func (d BatchDispatcher) Start() {
+func (d BatchDispatcher[REQ, RESP]) Start() {
 	d.waitClose.Add(d.numConsumers)
 	for i := 0; i < d.numConsumers; i++ {
 		go d.batchConsumer.start() // start consumer
@@ -51,12 +51,12 @@ func (d BatchDispatcher) Start() {
 }
 
 // Put submits the UnitOfWork to the worker pool.
-func (d BatchDispatcher) Put(ctx context.Context, u UnitOfWork) error {
-	return d.enqueue(ctx, u)
+func (d BatchDispatcher[REQ, RESP]) Put(ctx context.Context, u UnitOfWork[REQ, RESP]) error {
+	return d.queue.enqueue(ctx, u)
 }
 
 // Close gracefully shuts down the BatchDispatcher.
-func (d BatchDispatcher) Close() error {
+func (d BatchDispatcher[REQ, RESP]) Close() error {
 	d.queue.close()
 	close(d.close)
 	d.waitClose.Wait()

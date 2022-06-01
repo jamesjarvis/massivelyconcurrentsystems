@@ -9,7 +9,6 @@ type Config struct {
 	batchSize     int
 	batchInterval time.Duration
 
-	worker       BatchWorker
 	numConsumers int // TODO(jamesjarvis): Make this a min and max num consumers so it can scale based on backpressure.
 }
 
@@ -45,8 +44,8 @@ func SetNumConsumers(numConsumers int) Opt {
 type Opt func(c *Config)
 
 // NewConfig returns a pool Config with defaults that can be overridden.
-func NewConfig(w BatchWorker, opts ...Opt) Config {
-	conf := Config{worker: w}
+func NewConfig(opts ...Opt) Config {
+	conf := Config{}
 
 	for _, opt := range opts {
 		opt(&conf)

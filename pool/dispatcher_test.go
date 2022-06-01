@@ -85,7 +85,7 @@ func TestBatchDispatcher(t *testing.T) {
 			var workProcessed int
 			var calls int
 
-			worker := func(us []UnitOfWork) error {
+			worker := func(us []UnitOfWork[int, int]) error {
 				time.Sleep(testLocal.workerDuration)
 				mu.Lock()
 				defer mu.Unlock()
@@ -93,14 +93,14 @@ func TestBatchDispatcher(t *testing.T) {
 				calls++
 				return nil
 			}
-			config := NewConfig(worker, testLocal.opts...)
-			dispatcher := NewBatchDispatcher(config)
+			config := NewConfig(testLocal.opts...)
+			dispatcher := NewBatchDispatcher[int, int](worker, config)
 
 			dispatcher.Start()
 			startTime := time.Now()
 
 			for i := 0; i < testLocal.expectedWorkProcessed; i++ {
-				err := dispatcher.Put(context.TODO(), &testUnitOfWork{})
+				err := dispatcher.Put(context.TODO(), NewUnitOfWork[int, int](1000, nil))
 				if err != nil {
 					t.Errorf("dispatcher.Put error encountered! %v != nil", err)
 				}
@@ -129,13 +129,13 @@ func BenchmarkBatchDispatcher(b *testing.B) {
 		b.Run(test.name, func(b *testing.B) {
 			var wg sync.WaitGroup
 
-			worker := func(us []UnitOfWork) error {
+			worker := func(us []UnitOfWork[int, int]) error {
 				time.Sleep(testLocal.workerDuration)
 				wg.Add(-len(us))
 				return nil
 			}
-			config := NewConfig(worker, testLocal.opts...)
-			dispatcher := NewBatchDispatcher(config)
+			config := NewConfig(testLocal.opts...)
+			dispatcher := NewBatchDispatcher(worker, config)
 
 			dispatcher.Start()
 
@@ -146,7 +146,7 @@ func BenchmarkBatchDispatcher(b *testing.B) {
 				wg.Add(testLocal.expectedWorkProcessed)
 
 				for i := 0; i < testLocal.expectedWorkProcessed; i++ {
-					err := dispatcher.Put(context.TODO(), &testUnitOfWork{})
+					err := dispatcher.Put(context.TODO(), NewUnitOfWork[int, int](1000, &wg))
 					if err != nil {
 						b.Errorf("dispatcher.Put error encountered! %v != nil", err)
 					}
@@ -230,15 +230,15 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 	for _, test := range configTests {
 		testLocal := test
 		b.Run(test.name, func(b *testing.B) {
-			worker := func(us []UnitOfWork) error {
+			worker := func(us []UnitOfWork[int, int]) error {
 				// time.Sleep(test.workerDuration)
 				for _, u := range us {
 					u.Done()
 				}
 				return nil
 			}
-			config := NewConfig(worker, testLocal.opts...)
-			dispatcher := NewBatchDispatcher(config)
+			config := NewConfig(testLocal.opts...)
+			dispatcher := NewBatchDispatcher(worker, config)
 
 			dispatcher.Start()
 
@@ -248,7 +248,7 @@ func BenchmarkBatchDispatcherSingleItem(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
 				// We can be a bit sneaky here and use the same units of work, as they effectively reset each time.
 				wg := &sync.WaitGroup{}
-				work := &testUnitOfWork{wg: wg}
+				work := NewUnitOfWork[int, int](1000, wg)
 				for pb.Next() {
 					wg.Add(1)
 
