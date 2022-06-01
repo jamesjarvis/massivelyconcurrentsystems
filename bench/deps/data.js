@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654111153677,
+  "lastUpdate": 1654111961140,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -108,6 +108,42 @@ window.BENCHMARK_DATA = {
             "value": 16109278,
             "unit": "ns/op\t      15 B/op\t       0 allocs/op",
             "extra": "770 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "distinct": true,
+          "id": "b03e635d8668211e0b23a86e084b1e5aa00c6a17",
+          "message": "Update README with badges and links and stuff",
+          "timestamp": "2022-06-01T20:31:31+01:00",
+          "tree_id": "017cd2f7aeaedbc226a984520d19e79dae5ddae3",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/b03e635d8668211e0b23a86e084b1e5aa00c6a17"
+        },
+        "date": 1654111960154,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 22939429,
+            "unit": "ns/op\t     108 B/op\t       0 allocs/op",
+            "extra": "549 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 20290698,
+            "unit": "ns/op\t      10 B/op\t       0 allocs/op",
+            "extra": "610 times\n2 procs"
           }
         ]
       }
