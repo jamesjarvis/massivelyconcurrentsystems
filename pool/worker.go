@@ -24,8 +24,13 @@ func (c *batchConsumer[REQ, RESP]) start() {
 		watchdog.Stop()
 
 		if len(received) > 0 {
-			_ = c.worker(received) // TODO(jamesjarvis): Extend with the ability to append the error to all items in the batch.
 			// TODO(jamesjarvis): Extend to support passing a context into the BatchWorker.
+			err := c.worker(received)
+			if err != nil {
+				for _, uow := range received {
+					uow.SetError(err)
+				}
+			}
 			received = received[:0]
 		}
 		watchdog.Reset(c.batchInterval)
