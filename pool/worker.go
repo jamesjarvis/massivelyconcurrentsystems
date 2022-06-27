@@ -1,6 +1,7 @@
 package pool
 
 import (
+	"runtime"
 	"sync"
 	"time"
 )
@@ -36,7 +37,6 @@ func (c *batchConsumer[REQ, RESP]) start() {
 		watchdog.Reset(c.batchInterval)
 	}
 
-loop:
 	for {
 		if e, ok := c.queue.dequeue(); ok {
 			received = append(received, e)
@@ -44,38 +44,23 @@ loop:
 			if len(received) >= c.batchSize {
 				// reached max batch size.
 				doWork()
-			} else {
-				// otherwise, check for batchInterval timeout.
-				select {
-				case <-watchdog.C:
-					// if batchInterval timeout reached, operate on current batch size.
-					doWork()
-				default:
-				}
+				continue
 			}
-		} else {
-			// nothing currently in the queue to fetch.
-			select {
-			case <-c.close:
-				doWork()
-				if !watchdog.Stop() {
-					<-watchdog.C
-				}
-				c.waitClose.Done()
-				break loop
-			case <-watchdog.C:
-				// TODO(jamesjarvis): revisit this strategy. I think it means if we have nothing in the queue,
-				// we force ourselves to wait for the whole duration of the batchInterval before picking up values again.
-				doWork()
-			case e := <-c.queue.ch:
-				if e != nil {
-					received = append(received, e)
-					if len(received) >= c.batchSize {
-						// reached max batch size.
-						doWork()
-					}
-				}
+		}
+
+		// nothing currently in the queue to fetch.
+		select {
+		case <-c.close: // kill the worker.
+			doWork()
+			if !watchdog.Stop() {
+				<-watchdog.C
 			}
+			c.waitClose.Done()
+			return
+		case <-watchdog.C:
+			doWork()
+		default: // this forces a busy wait, perhaps this is too heavy?
+			runtime.Gosched()
 		}
 	}
 }
