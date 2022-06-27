@@ -26,9 +26,9 @@ type BatchWorker[REQ, RESP any] func([]UnitOfWork[REQ, RESP]) error
 type Dispatcher[E any] interface {
 	// Start initialises the dispatcher.
 	Start()
-	// Put places the UnitOfWork into the pool.
+	// Put places the element into the pool.
 	// if the context expires before it can be enqueued, error will be ctx.Err().
 	Put(context.Context, E) error
 	// Close gracefully shuts down the dispatcher once all work is complete.
-	Close()
+	Close() error
 }
