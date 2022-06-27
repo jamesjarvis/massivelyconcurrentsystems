@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654112305507,
+  "lastUpdate": 1656372216656,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -180,6 +180,42 @@ window.BENCHMARK_DATA = {
             "value": 21386898,
             "unit": "ns/op\t       0 B/op\t       0 allocs/op",
             "extra": "595 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "382f373ca046940c2a8b284a8025d5709a810013",
+          "message": "Merge pull request #3 from jamesjarvis/simplify-worker\n\nI think simplify the worker?",
+          "timestamp": "2022-06-28T00:22:40+01:00",
+          "tree_id": "cbbfe7b3440e4d575171d6a755811897870984e4",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/382f373ca046940c2a8b284a8025d5709a810013"
+        },
+        "date": 1656372216289,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 19392920,
+            "unit": "ns/op\t       7 B/op\t       0 allocs/op",
+            "extra": "555 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 18872666,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "608 times\n2 procs"
           }
         ]
       }
