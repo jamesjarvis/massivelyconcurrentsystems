@@ -105,7 +105,7 @@ func (d *BatchDispatcher[REQ, RESP]) Put(ctx context.Context, u UnitOfWork[REQ, 
 // Close gracefully shuts down the BatchDispatcher.
 func (d *BatchDispatcher[REQ, RESP]) Close() error {
 	d.queue.close()
-	close(d.closeWatchdog)
+	d.closeWatchdog <- struct{}{}
 	close(d.close)
 	d.waitClose.Wait()
 	return nil
