@@ -7,13 +7,13 @@ import (
 )
 
 // queue handles access into and out of the internal queue.
-type queue[REQ, RESP any] struct {
-	ch chan UnitOfWork[REQ, RESP]
+type queue[E any] struct {
+	ch chan E
 
 	waitClose *sync.WaitGroup
 }
 
-func (q *queue[REQ, RESP]) enqueue(ctx context.Context, e UnitOfWork[REQ, RESP]) error {
+func (q *queue[E]) enqueue(ctx context.Context, e E) error {
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
@@ -25,20 +25,21 @@ func (q *queue[REQ, RESP]) enqueue(ctx context.Context, e UnitOfWork[REQ, RESP])
 	}
 }
 
-func (q *queue[REQ, RESP]) dequeue() (UnitOfWork[REQ, RESP], bool) {
+func (q *queue[E]) dequeue() (E, bool) {
 	select {
 	case v, ok := <-q.ch:
 		return v, ok
 	default:
-		return nil, false
+		var v E
+		return v, false
 	}
 }
 
-func (q *queue[REQ, RESP]) size() int {
+func (q *queue[E]) size() int {
 	return len(q.ch)
 }
 
-func (q *queue[REQ, RESP]) close() {
+func (q *queue[E]) close() {
 	close(q.ch)
 	for {
 		if q.size() == 0 {
@@ -49,10 +50,10 @@ func (q *queue[REQ, RESP]) close() {
 	q.waitClose.Done()
 }
 
-func newQueue[REQ, RESP any](bufferSize int, waitClose *sync.WaitGroup) *queue[REQ, RESP] {
+func newQueue[E any](bufferSize int, waitClose *sync.WaitGroup) *queue[E] {
 	waitClose.Add(1)
-	return &queue[REQ, RESP]{
-		ch:        make(chan UnitOfWork[REQ, RESP], bufferSize),
+	return &queue[E]{
+		ch:        make(chan E, bufferSize),
 		waitClose: waitClose,
 	}
 }

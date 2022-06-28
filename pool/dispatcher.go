@@ -10,7 +10,7 @@ import (
 // BatchDispatcher controls access to the batched pool implementation.
 type BatchDispatcher[REQ, RESP any] struct {
 	// inner buffer
-	*queue[REQ, RESP]
+	*queue[UnitOfWork[REQ, RESP]]
 	bufferSize int
 
 	*batchConsumer[REQ, RESP]
@@ -27,7 +27,7 @@ func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Con
 	closeChan := make(chan struct{})
 	closeWatchdogChan := make(chan struct{})
 
-	q := newQueue[REQ, RESP](config.bufferSize, &waitClose)
+	q := newQueue[UnitOfWork[REQ, RESP]](config.bufferSize, &waitClose)
 	d := &BatchDispatcher[REQ, RESP]{
 		queue:        q,
 		bufferSize:   config.bufferSize,

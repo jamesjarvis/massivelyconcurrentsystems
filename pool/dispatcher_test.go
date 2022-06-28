@@ -10,7 +10,7 @@ import (
 	"go.uber.org/goleak"
 )
 
-const defaultWork = 100
+const defaultWork = 1000
 
 var tests = []struct {
 	name                  string

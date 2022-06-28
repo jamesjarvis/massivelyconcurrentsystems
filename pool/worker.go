@@ -8,7 +8,7 @@ import (
 
 // batchConsumer consumes from the inner queue and invokes the BatchWorker.
 type batchConsumer[REQ, RESP any] struct {
-	*queue[REQ, RESP]
+	*queue[UnitOfWork[REQ, RESP]]
 	close     chan struct{}
 	waitClose *sync.WaitGroup
 
