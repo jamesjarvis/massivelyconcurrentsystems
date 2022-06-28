@@ -22,6 +22,9 @@ type UnitOfWork[REQ any, RESP any] interface {
 // BatchWorker is a function that will be used to operate on a batch of requests from the pool.
 type BatchWorker[REQ, RESP any] func([]UnitOfWork[REQ, RESP]) error
 
+// Worker is a function that will be used to operate on a single request from the pool.
+type Worker[E any] func(E)
+
 // Dispatcher controls interactions with the pool.
 type Dispatcher[E any] interface {
 	// Start initialises the dispatcher.
