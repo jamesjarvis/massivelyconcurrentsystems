@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656372496531,
+  "lastUpdate": 1656850562423,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -576,6 +576,150 @@ window.BENCHMARK_DATA = {
             "value": 6721900,
             "unit": "ns/op\t    4802 B/op\t     100 allocs/op",
             "extra": "1790 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f957b14cc16788480de06ba717a56c3aba90c4a7",
+          "message": "Single worker (#6)\n\n* add dynamic worker pool changer bases on size of the queue\r\n\r\n* handle send on closed channel\r\n\r\n* correct interface\r\n\r\n* try to use fewer generics where possible\r\n\r\n* implement singleworker\r\n\r\n* remove watchdog resizer",
+          "timestamp": "2022-07-03T13:10:19+01:00",
+          "tree_id": "81eaf9f7cfd0a18226c72b833bb7a7e2c6169c91",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/f957b14cc16788480de06ba717a56c3aba90c4a7"
+        },
+        "date": 1656850561722,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkBatchDispatcher/no_work",
+            "value": 15.9,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "760355080 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/lots_of_work",
+            "value": 6083045,
+            "unit": "ns/op\t  480001 B/op\t   10000 allocs/op",
+            "extra": "2086 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/more_work_than_buffer",
+            "value": 1561390,
+            "unit": "ns/op\t   48000 B/op\t    1000 allocs/op",
+            "extra": "7699 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/more_workers_than_work",
+            "value": 1887178,
+            "unit": "ns/op\t   48462 B/op\t    1000 allocs/op",
+            "extra": "6356 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/tiny_batch_size",
+            "value": 295597,
+            "unit": "ns/op\t   48000 B/op\t    1000 allocs/op",
+            "extra": "41564 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/huge_batch_size",
+            "value": 1073858,
+            "unit": "ns/op\t   48032 B/op\t    1000 allocs/op",
+            "extra": "10000 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/teeny_interval",
+            "value": 471370,
+            "unit": "ns/op\t   48000 B/op\t    1000 allocs/op",
+            "extra": "26868 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/slow_worker",
+            "value": 26292569,
+            "unit": "ns/op\t   48009 B/op\t    1000 allocs/op",
+            "extra": "456 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcher/slow_worker_and_huge_batch_size",
+            "value": 6489380,
+            "unit": "ns/op\t   48018 B/op\t    1000 allocs/op",
+            "extra": "1845 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/default",
+            "value": 405821,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "29641 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_buffer",
+            "value": 407792,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "29425 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/large_buffer",
+            "value": 405588,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "29342 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_interval",
+            "value": 1164,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "9903171 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/huge_interval",
+            "value": 3802995,
+            "unit": "ns/op\t       1 B/op\t       0 allocs/op",
+            "extra": "2782 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_batch_size",
+            "value": 1058,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "11005249 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/huge_batch_size",
+            "value": 411271,
+            "unit": "ns/op\t       1 B/op\t       0 allocs/op",
+            "extra": "29044 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/tiny_number_of_workers",
+            "value": 561450,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "21181 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/educated_guess_number_of_workers",
+            "value": 549931,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "21826 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/huge_number_of_workers",
+            "value": 294313,
+            "unit": "ns/op\t      38 B/op\t       0 allocs/op",
+            "extra": "41018 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkBatchDispatcherSingleItem/guesstimate",
+            "value": 1198,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "8820384 times\n2 procs"
           }
         ]
       }
