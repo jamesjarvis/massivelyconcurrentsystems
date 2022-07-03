@@ -2,9 +2,7 @@ package pool
 
 import (
 	"context"
-	"fmt"
 	"sync"
-	"time"
 )
 
 // WorkDispatcher controls access to the pool implementation.
@@ -16,9 +14,8 @@ type WorkDispatcher[E any] struct {
 	worker       Consumer
 	numConsumers int
 
-	close         chan struct{} // notify workers to close.
-	closeWatchdog chan struct{} // notify watchdog to close.
-	waitClose     *sync.WaitGroup
+	close     chan struct{} // notify workers to close.
+	waitClose *sync.WaitGroup
 }
 
 // NewBatchDispatcher returns a WorkDispatcher parameterised from Config.
@@ -26,7 +23,6 @@ type WorkDispatcher[E any] struct {
 func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Config) *WorkDispatcher[UnitOfWork[REQ, RESP]] {
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
-	closeWatchdogChan := make(chan struct{})
 
 	q := newQueue[UnitOfWork[REQ, RESP]](config.bufferSize, &waitClose)
 	d := &WorkDispatcher[UnitOfWork[REQ, RESP]]{
@@ -43,9 +39,8 @@ func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Con
 			batchInterval: config.batchInterval,
 		},
 
-		close:         closeChan,
-		closeWatchdog: closeWatchdogChan,
-		waitClose:     &waitClose,
+		close:     closeChan,
+		waitClose: &waitClose,
 	}
 	return d
 }
@@ -55,7 +50,6 @@ func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Con
 func NewSingleDispatcher[E any](worker Worker[E], config Config) *WorkDispatcher[E] {
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
-	closeWatchdogChan := make(chan struct{})
 
 	q := newQueue[E](config.bufferSize, &waitClose)
 	d := &WorkDispatcher[E]{
@@ -70,46 +64,10 @@ func NewSingleDispatcher[E any](worker Worker[E], config Config) *WorkDispatcher
 			worker:    worker,
 		},
 
-		close:         closeChan,
-		closeWatchdog: closeWatchdogChan,
-		waitClose:     &waitClose,
+		close:     closeChan,
+		waitClose: &waitClose,
 	}
 	return d
-}
-
-// watchDog will periodically look at the goroutine pool, and scale up/down based on the pressure on the queue.
-// Initial implementation will double the number of workers, if queue is above 80% of bufferSize.
-// If queue is between 20-80% of bufferSize, do nothing.
-// If queue is between 0-20% of bufferSize, remove 10% of workers.
-// after each change, wait waitDuration before checking again.
-func (d *WorkDispatcher[E]) watchDog() {
-	const tik = 500 * time.Millisecond
-	tkr := time.NewTicker(tik)
-	var sizePerc float64
-	for {
-		select {
-		case <-d.closeWatchdog:
-			tkr.Stop()
-			return
-		case <-tkr.C:
-			fmt.Printf("Size of worker pool: %d, size of queue: %d/%d\n", d.numConsumers, d.queue.size(), d.bufferSize)
-			sizePerc = float64(d.queue.size() / d.bufferSize)
-			switch {
-			case sizePerc > 0.8:
-				// Add workers to pool.
-				newWorkers := int(d.numConsumers)
-				d.start(newWorkers)
-				d.numConsumers += newWorkers
-			case sizePerc < 0.2:
-				// Remove workers from pool.
-				for i := 0; i < int(float64(d.numConsumers)*0.1); i++ {
-					d.close <- struct{}{}
-					d.numConsumers -= 1
-				}
-			}
-			tkr.Reset(tik)
-		}
-	}
 }
 
 func (d *WorkDispatcher[E]) start(numWorkers int) {
@@ -122,7 +80,6 @@ func (d *WorkDispatcher[E]) start(numWorkers int) {
 // Start initialises the BatchDispatcher.
 func (d *WorkDispatcher[E]) Start() {
 	d.start(d.numConsumers)
-	go d.watchDog()
 }
 
 // Put submits the UnitOfWork to the worker pool.
@@ -133,7 +90,6 @@ func (d *WorkDispatcher[E]) Put(ctx context.Context, e E) error {
 // Close gracefully shuts down the BatchDispatcher.
 func (d *WorkDispatcher[E]) Close() error {
 	d.queue.close()
-	d.closeWatchdog <- struct{}{}
 	close(d.close)
 	d.waitClose.Wait()
 	return nil
