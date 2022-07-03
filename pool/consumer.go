@@ -6,9 +6,14 @@ import (
 	"time"
 )
 
+// Consumer is an internal consumer from a queue, calling go Start() spawns a new threadsafe consumer.
+type Consumer interface {
+	Start()
+}
+
 // batchConsumer consumes from the inner queue and invokes the BatchWorker.
 type batchConsumer[REQ, RESP any] struct {
-	*queue[REQ, RESP]
+	*queue[UnitOfWork[REQ, RESP]]
 	close     chan struct{}
 	waitClose *sync.WaitGroup
 
@@ -17,7 +22,7 @@ type batchConsumer[REQ, RESP any] struct {
 	batchInterval time.Duration
 }
 
-func (c *batchConsumer[REQ, RESP]) start() {
+func (c *batchConsumer[REQ, RESP]) Start() {
 	received := make([]UnitOfWork[REQ, RESP], 0, c.batchSize)
 	watchdog := time.NewTimer(c.batchInterval)
 
@@ -61,6 +66,27 @@ func (c *batchConsumer[REQ, RESP]) start() {
 			doWork()
 		default: // this forces a busy wait, perhaps this is too heavy?
 			runtime.Gosched()
+		}
+	}
+}
+
+// singleConsumer consumes from the inner queue and invokes the Worker.
+type singleConsumer[E any] struct {
+	*queue[E]
+	close     chan struct{}
+	waitClose *sync.WaitGroup
+
+	worker Worker[E]
+}
+
+func (c *singleConsumer[E]) Start() {
+	for {
+		select {
+		case e := <-c.queue.ch:
+			c.worker(e)
+		case <-c.close: // kill the worker.
+			c.waitClose.Done()
+			return
 		}
 	}
 }
