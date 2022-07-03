@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656372216656,
+  "lastUpdate": 1656850275116,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -216,6 +216,42 @@ window.BENCHMARK_DATA = {
             "value": 18872666,
             "unit": "ns/op\t       0 B/op\t       0 allocs/op",
             "extra": "608 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f957b14cc16788480de06ba717a56c3aba90c4a7",
+          "message": "Single worker (#6)\n\n* add dynamic worker pool changer bases on size of the queue\r\n\r\n* handle send on closed channel\r\n\r\n* correct interface\r\n\r\n* try to use fewer generics where possible\r\n\r\n* implement singleworker\r\n\r\n* remove watchdog resizer",
+          "timestamp": "2022-07-03T13:10:19+01:00",
+          "tree_id": "81eaf9f7cfd0a18226c72b833bb7a7e2c6169c91",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/f957b14cc16788480de06ba717a56c3aba90c4a7"
+        },
+        "date": 1656850274282,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 18348133,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "650 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 18333860,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "660 times\n2 procs"
           }
         ]
       }
