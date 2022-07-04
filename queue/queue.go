@@ -10,5 +10,5 @@ type Queue[E any] interface {
 	Dequeue() (E, bool)
 	DequeueBlocking() <-chan E
 	Size() int
-	Close()
+	Close() error
 }
