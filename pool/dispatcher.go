@@ -3,12 +3,14 @@ package pool
 import (
 	"context"
 	"sync"
+
+	"github.com/jamesjarvis/massivelyconcurrentsystems/queue"
 )
 
 // WorkDispatcher controls access to the pool implementation.
 type WorkDispatcher[E any] struct {
 	// inner buffer
-	*queue[E]
+	queue      queue.Queue[E]
 	bufferSize int
 
 	worker       Consumer
@@ -24,7 +26,7 @@ func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Con
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
 
-	q := newQueue[UnitOfWork[REQ, RESP]](config.bufferSize, &waitClose)
+	q := queue.NewInMemoryQueue[UnitOfWork[REQ, RESP]](config.bufferSize, &waitClose)
 	d := &WorkDispatcher[UnitOfWork[REQ, RESP]]{
 		queue:        q,
 		bufferSize:   config.bufferSize,
@@ -51,7 +53,7 @@ func NewSingleDispatcher[E any](worker Worker[E], config Config) *WorkDispatcher
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
 
-	q := newQueue[E](config.bufferSize, &waitClose)
+	q := queue.NewInMemoryQueue[E](config.bufferSize, &waitClose)
 	d := &WorkDispatcher[E]{
 		queue:        q,
 		bufferSize:   config.bufferSize,
@@ -84,12 +86,12 @@ func (d *WorkDispatcher[E]) Start() {
 
 // Put submits the UnitOfWork to the worker pool.
 func (d *WorkDispatcher[E]) Put(ctx context.Context, e E) error {
-	return d.queue.enqueue(ctx, e)
+	return d.queue.Enqueue(ctx, e)
 }
 
 // Close gracefully shuts down the BatchDispatcher.
 func (d *WorkDispatcher[E]) Close() error {
-	d.queue.close()
+	d.queue.Close()
 	close(d.close)
 	d.waitClose.Wait()
 	return nil
