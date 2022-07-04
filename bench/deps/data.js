@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656966021221,
+  "lastUpdate": 1656972695655,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -288,6 +288,42 @@ window.BENCHMARK_DATA = {
             "value": 16867896,
             "unit": "ns/op\t       9 B/op\t       0 allocs/op",
             "extra": "685 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1dedbe491f79b3bf3787d18ace3e92e0433dfd07",
+          "message": "simplify batchworker interface and add error return to Worker (#8)\n\n* simplify batchworker interface and add error return to Worker\r\n\r\n* add error \"handling\"",
+          "timestamp": "2022-07-04T23:10:38+01:00",
+          "tree_id": "4e0d28cb2bd95fbfc366e88e7ecb16f055f7dc65",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/1dedbe491f79b3bf3787d18ace3e92e0433dfd07"
+        },
+        "date": 1656972694813,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 16411805,
+            "unit": "ns/op\t      24 B/op\t       0 allocs/op",
+            "extra": "746 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 16700809,
+            "unit": "ns/op\t       8 B/op\t       0 allocs/op",
+            "extra": "732 times\n2 procs"
           }
         ]
       }
