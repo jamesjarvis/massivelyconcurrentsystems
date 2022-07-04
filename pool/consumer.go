@@ -144,7 +144,11 @@ func (c *singleConsumer[E]) Start() {
 	for {
 		select {
 		case e := <-c.queue.DequeueBlocking():
-			c.worker(e)
+			err := c.worker(e)
+			if err != nil {
+				// TODO(jamesjarvis): Do something with this error I guess?
+				log.Println("Error encountered!", err)
+			}
 		case <-c.close: // kill the worker.
 			c.waitClose.Done()
 			return
