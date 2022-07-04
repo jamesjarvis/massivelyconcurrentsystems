@@ -64,7 +64,7 @@ func (q *InMemoryQueue[E]) Size() int {
 
 // Close closes the queue, preventing any further Enqueue operations.
 // Blocks until the queue is empty.
-func (q *InMemoryQueue[E]) Close() {
+func (q *InMemoryQueue[E]) Close() error {
 	close(q.ch)
 	for {
 		if q.Size() == 0 {
@@ -73,4 +73,5 @@ func (q *InMemoryQueue[E]) Close() {
 		time.Sleep(time.Millisecond)
 	}
 	q.waitClose.Done()
+	return nil
 }
