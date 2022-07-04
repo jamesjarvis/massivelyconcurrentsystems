@@ -22,7 +22,34 @@ type WorkDispatcher[E any] struct {
 
 // NewBatchDispatcher returns a WorkDispatcher parameterised from Config.
 // It is specialised such that it will receive a batch of UnitOfWork's in each worker.
-func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Config) *WorkDispatcher[UnitOfWork[REQ, RESP]] {
+func NewBatchDispatcher[E any](worker BatchWorker[E], config Config) *WorkDispatcher[E] {
+	var waitClose sync.WaitGroup
+	closeChan := make(chan struct{})
+
+	q := queue.NewInMemoryQueue[E](config.bufferSize, &waitClose)
+	d := &WorkDispatcher[E]{
+		queue:        q,
+		bufferSize:   config.bufferSize,
+		numConsumers: config.numConsumers,
+
+		worker: &batchConsumer[E]{
+			queue:         q,
+			close:         closeChan,
+			waitClose:     &waitClose,
+			worker:        worker,
+			batchSize:     config.batchSize,
+			batchInterval: config.batchInterval,
+		},
+
+		close:     closeChan,
+		waitClose: &waitClose,
+	}
+	return d
+}
+
+// NewBatchWorkDispatcher returns a WorkDispatcher parameterised from Config.
+// It is specialised such that it will receive a batch of UnitOfWork's in each worker.
+func NewBatchWorkDispatcher[REQ, RESP any](worker BatchWorker[UnitOfWork[REQ, RESP]], config Config) *WorkDispatcher[UnitOfWork[REQ, RESP]] {
 	var waitClose sync.WaitGroup
 	closeChan := make(chan struct{})
 
@@ -32,7 +59,7 @@ func NewBatchDispatcher[REQ, RESP any](worker BatchWorker[REQ, RESP], config Con
 		bufferSize:   config.bufferSize,
 		numConsumers: config.numConsumers,
 
-		worker: &batchConsumer[REQ, RESP]{
+		worker: &batchWorkConsumer[REQ, RESP]{
 			queue:         q,
 			close:         closeChan,
 			waitClose:     &waitClose,
