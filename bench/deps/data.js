@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656972695655,
+  "lastUpdate": 1656974680981,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -324,6 +324,42 @@ window.BENCHMARK_DATA = {
             "value": 16700809,
             "unit": "ns/op\t       8 B/op\t       0 allocs/op",
             "extra": "732 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0ec39a6a7961e8edb25003f0a149a5ee691f407d",
+          "message": "return error from queue close (#9)",
+          "timestamp": "2022-07-04T23:43:48+01:00",
+          "tree_id": "1c576511b8b439c793df23d787f15b86d41aef71",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/0ec39a6a7961e8edb25003f0a149a5ee691f407d"
+        },
+        "date": 1656974680595,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 15633838,
+            "unit": "ns/op\t       9 B/op\t       0 allocs/op",
+            "extra": "687 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 15454339,
+            "unit": "ns/op\t      15 B/op\t       0 allocs/op",
+            "extra": "800 times\n2 procs"
           }
         ]
       }
