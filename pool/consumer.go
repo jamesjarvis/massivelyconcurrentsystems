@@ -4,6 +4,8 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/jamesjarvis/massivelyconcurrentsystems/queue"
 )
 
 // Consumer is an internal consumer from a queue, calling go Start() spawns a new threadsafe consumer.
@@ -13,7 +15,7 @@ type Consumer interface {
 
 // batchConsumer consumes from the inner queue and invokes the BatchWorker.
 type batchConsumer[REQ, RESP any] struct {
-	*queue[UnitOfWork[REQ, RESP]]
+	queue     queue.Queue[UnitOfWork[REQ, RESP]]
 	close     chan struct{}
 	waitClose *sync.WaitGroup
 
@@ -43,7 +45,7 @@ func (c *batchConsumer[REQ, RESP]) Start() {
 	}
 
 	for {
-		if e, ok := c.queue.dequeue(); ok {
+		if e, ok := c.queue.Dequeue(); ok {
 			received = append(received, e)
 
 			if len(received) >= c.batchSize {
@@ -72,7 +74,7 @@ func (c *batchConsumer[REQ, RESP]) Start() {
 
 // singleConsumer consumes from the inner queue and invokes the Worker.
 type singleConsumer[E any] struct {
-	*queue[E]
+	queue     queue.Queue[E]
 	close     chan struct{}
 	waitClose *sync.WaitGroup
 
@@ -82,7 +84,7 @@ type singleConsumer[E any] struct {
 func (c *singleConsumer[E]) Start() {
 	for {
 		select {
-		case e := <-c.queue.ch:
+		case e := <-c.queue.DequeueBlocking():
 			c.worker(e)
 		case <-c.close: // kill the worker.
 			c.waitClose.Done()
