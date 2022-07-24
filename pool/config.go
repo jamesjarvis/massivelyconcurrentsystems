@@ -1,6 +1,10 @@
 package pool
 
-import "time"
+import (
+	"math"
+	"runtime"
+	"time"
+)
 
 // Config defines params for Dispatcher.
 type Config struct {
@@ -64,7 +68,8 @@ func NewConfig(opts ...Opt) Config {
 	}
 
 	if conf.numConsumers == 0 {
-		conf.numConsumers = 2
+		numConsumers := math.Max(float64(runtime.NumCPU()-2), 2)
+		conf.numConsumers = int(numConsumers)
 	}
 
 	return conf
