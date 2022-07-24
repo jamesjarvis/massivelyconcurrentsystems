@@ -143,7 +143,10 @@ type singleConsumer[E any] struct {
 func (c *singleConsumer[E]) Start() {
 	for {
 		select {
-		case e := <-c.queue.DequeueBlocking():
+		case e, ok := <-c.queue.DequeueBlocking():
+			if !ok {
+				continue
+			}
 			err := c.worker(e)
 			if err != nil {
 				// TODO(jamesjarvis): Do something with this error I guess?
