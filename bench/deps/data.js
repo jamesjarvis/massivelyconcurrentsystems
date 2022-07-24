@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656974680981,
+  "lastUpdate": 1658651997094,
   "repoUrl": "https://github.com/jamesjarvis/massivelyconcurrentsystems",
   "entries": {
     "Benchmark": [
@@ -360,6 +360,42 @@ window.BENCHMARK_DATA = {
             "value": 15454339,
             "unit": "ns/op\t      15 B/op\t       0 allocs/op",
             "extra": "800 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@jamesjarvis.io",
+            "name": "James Jarvis",
+            "username": "jamesjarvis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c1384b7059013e37a564ca377d7ed04d37ade0ae",
+          "message": "fix nil consumption from singleConsumer (#10)\n\n* set default consumers to NUM_CPU-2\r\n\r\n* may send empty objects forward with the singleConsumer",
+          "timestamp": "2022-07-24T09:39:06+01:00",
+          "tree_id": "da939bfc14223de17935de2fa6f373bc747c2941",
+          "url": "https://github.com/jamesjarvis/massivelyconcurrentsystems/commit/c1384b7059013e37a564ca377d7ed04d37ade0ae"
+        },
+        "date": 1658651996705,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/chans",
+            "value": 18272446,
+            "unit": "ns/op\t      10 B/op\t       0 allocs/op",
+            "extra": "603 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkWaitManyDepsWithDeps/waitgroups",
+            "value": 17363368,
+            "unit": "ns/op\t      26 B/op\t       0 allocs/op",
+            "extra": "696 times\n2 procs"
           }
         ]
       }
